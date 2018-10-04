@@ -8,9 +8,14 @@ package imagej_dicom;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
+import java.awt.Image;
+import java.awt.ScrollPane;
 import java.io.File;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 
 /**
  *
@@ -35,8 +40,10 @@ public class frameHome extends javax.swing.JFrame {
     private void initComponents() {
 
         abrirImagem = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        aplicarFiltro = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,7 +54,12 @@ public class frameHome extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Aplicar Filtro");
+        aplicarFiltro.setText("Aplicar Filtro");
+        aplicarFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aplicarFiltroActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -55,39 +67,51 @@ public class frameHome extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 247, Short.MAX_VALUE)
+            .addGap(0, 967, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 331, Short.MAX_VALUE)
+            .addGap(0, 671, Short.MAX_VALUE)
         );
+
+        jScrollPane1.setViewportView(jPanel1);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setText("Aplicando filtro em imagens DICOM usando IMAGEJ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(abrirImagem)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(abrirImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                    .addComponent(aplicarFiltro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(344, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(294, 294, 294))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(72, 72, 72)
+                        .addGap(96, 96, 96)
                         .addComponent(abrirImagem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2))
+                        .addGap(28, 28, 28)
+                        .addComponent(aplicarFiltro)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
 
         pack();
@@ -97,19 +121,30 @@ public class frameHome extends javax.swing.JFrame {
         // TODO add your handling code here:
         chooser = new JFileChooser();
         int i = chooser.showSaveDialog(null);
-        if (i == 1) {
-            //    JtextFieldLocal.setText("");
-        } else {
+        if (i != 1) {
             File arquivo = chooser.getSelectedFile();
 
-            ImagePlus ip = IJ.openImage(arquivo.getPath());
-            ImageWindow window = new ImageWindow(ip);
-            jPanel1.add(window.getCanvas());
+            ip = IJ.openImage(arquivo.getPath());
+            ImageCanvas ic = new ImageCanvas(ip);
 
-            //  ip.show();
-            //  arquivo.getPath();
+            jPanel1.removeAll();
+
+            jPanel1.add(ic);
+            
         }
     }//GEN-LAST:event_abrirImagemActionPerformed
+
+    private void aplicarFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aplicarFiltroActionPerformed
+        Image_Inverter iv = new Image_Inverter();
+        iv.run(ip.getProcessor());
+        iv.getIpPublic();
+        ImagePlus novo = new ImagePlus("NovaImagem", iv.getIpPublic());
+        jPanel1.removeAll();
+        ImageCanvas ic = new ImageCanvas(novo);
+        jPanel1.add(ic);
+        jPanel1.revalidate();
+       
+    }//GEN-LAST:event_aplicarFiltroActionPerformed
 
     /**
      * @param args the command line arguments
@@ -142,14 +177,18 @@ public class frameHome extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new frameHome().setVisible(true);
+
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton abrirImagem;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton aplicarFiltro;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
     private JFileChooser chooser;
+    private ImagePlus ip;
 }
